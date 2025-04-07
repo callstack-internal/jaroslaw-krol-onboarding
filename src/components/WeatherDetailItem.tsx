@@ -4,7 +4,7 @@ import {List} from 'react-native-paper';
 
 type Props = {
   title: string;
-  value: number | string;
+  value?: number | string;
   unit?: string;
   icon: string;
 };

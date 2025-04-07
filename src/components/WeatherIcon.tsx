@@ -25,6 +25,7 @@ const WeatherIcon = ({condition, size = 24, color}: Props) => {
 
   return (
     <MaterialCommunityIcons
+      testID="weather-icon"
       name={getWeatherIcon(condition)}
       size={size}
       color={color}
