@@ -66,15 +66,17 @@ const WeatherDetails = ({route}: Props) => {
       </Surface>
 
       <Surface style={styles.detailsContainer} elevation={1}>
-        {weatherDetails.map((detail, index) => (
-          <WeatherDetailItem
-            key={index}
-            title={detail.title}
-            value={detail.value}
-            unit={detail.unit}
-            icon={detail.icon}
-          />
-        ))}
+        <View style={styles.detailsContent}>
+          {weatherDetails.map((detail, index) => (
+            <WeatherDetailItem
+              key={index}
+              title={detail.title}
+              value={detail.value}
+              unit={detail.unit}
+              icon={detail.icon}
+            />
+          ))}
+        </View>
       </Surface>
     </ScrollView>
   );
@@ -87,14 +89,13 @@ const styles = StyleSheet.create({
   header: {
     margin: 16,
     borderRadius: 12,
-    overflow: 'hidden',
     backgroundColor: 'white',
-
   },
   headerContent: {
     padding: 24,
     alignItems: 'center',
-    
+    borderRadius: 12,
+    overflow: 'hidden',
   },
   city: {
     marginTop: 8,
@@ -108,9 +109,11 @@ const styles = StyleSheet.create({
   detailsContainer: {
     margin: 16,
     borderRadius: 12,
-    overflow: 'hidden',
     backgroundColor: 'white',
-
+  },
+  detailsContent: {
+    borderRadius: 12,
+    overflow: 'hidden',
   },
 });
 
