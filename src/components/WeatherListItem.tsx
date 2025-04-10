@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import {View, StyleSheet, Pressable} from 'react-native';
-import {Text} from 'react-native-paper';
+import {List, Text} from 'react-native-paper';
 import type {WeatherData} from '../types/weather';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import type {RootStackParamList} from '../types/navigation';
@@ -9,16 +9,17 @@ import WeatherIcon from './WeatherIcon';
 type Props = {
   item: WeatherData;
   navigation: NativeStackNavigationProp<RootStackParamList, 'Weather'>;
-  isFocused?: boolean;
+  index: number;
 };
 
-const WeatherListItem = ({item, navigation, isFocused = false}: Props) => {
+const WeatherListItem = forwardRef<View, Props>(({item, navigation}, ref) => {
   return (
     <Pressable
+      ref={ref}
       onPress={() => navigation.navigate('Details', {weatherData: item})}
       style={({focused}) => [
         styles.container,
-        (focused || isFocused) && styles.focusedContainer,
+        (focused) && styles.focusedContainer,
       ]}>
       <View style={styles.card}>
         <View style={styles.iconContainer}>
@@ -34,7 +35,9 @@ const WeatherListItem = ({item, navigation, isFocused = false}: Props) => {
       </View>
     </Pressable>
   );
-};
+});
+
+WeatherListItem.displayName = 'WeatherListItem';
 
 const styles = StyleSheet.create({
   container: {

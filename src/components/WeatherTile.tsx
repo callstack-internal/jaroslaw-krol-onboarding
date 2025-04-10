@@ -9,11 +9,13 @@ import WeatherIcon from './WeatherIcon';
 type Props = {
   item: WeatherData;
   navigation: NativeStackNavigationProp<RootStackParamList, 'Weather'>;
+  index: number;
 };
 
-const WeatherTile = ({item, navigation}: Props) => {
+const WeatherTile = ({item, navigation, index}: Props) => {
   return (
     <Pressable
+      hasTVPreferredFocus={index === 0}
       onPress={() => navigation.navigate('Details', {weatherData: item})}
       style={({pressed, focused}) => [
         styles.container,
@@ -72,7 +74,6 @@ const styles = StyleSheet.create({
   },
   temperatureText: {
     color: '#5c9cdb',
-    // marginBottom: 8,
   },
 });
 

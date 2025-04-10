@@ -1,11 +1,11 @@
-import React, {useState, useMemo} from 'react';
-import {View, StyleSheet, FlatList, ActivityIndicator, Pressable, ScrollView} from 'react-native';
+import React, {useState, useMemo, useRef} from 'react';
+import {View, StyleSheet, FlatList, ActivityIndicator, Pressable, ScrollView, TVFocusGuideView} from 'react-native';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import WeatherListItem from '../components/WeatherListItem';
 import type {RootStackParamList} from '../types/navigation';
 import type {WeatherData} from '../types/weather';
 import {useWeatherData} from '../hooks/useWeatherData';
-import {Text, Searchbar, Card} from 'react-native-paper';
+import {Text, Searchbar, Card, TextInput} from 'react-native-paper';
 import WeatherIcon from '../components/WeatherIcon';
 import WeatherTile from '../components/WeatherTile';
 
@@ -14,6 +14,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Weather'>;
 const WeatherList = ({navigation}: Props) => {
   const {data, isLoading, isError, error} = useWeatherData();
   const [searchQuery, setSearchQuery] = useState('');
+  const firstItemRef = useRef<View>(null);
 
   const filteredData = useMemo(() => {
     if (!data?.list) return [];
@@ -38,8 +39,13 @@ const WeatherList = ({navigation}: Props) => {
     );
   }
 
-  const renderItem = ({item}: {item: WeatherData}) => (
-    <WeatherListItem item={item} navigation={navigation} />
+  const renderItem = ({item, index}: {item: WeatherData, index: number}) => (
+    <WeatherListItem
+      ref={index === 0 ? firstItemRef : null}
+      item={item}
+      navigation={navigation}
+      index={index}
+    />
   );
 
   const renderEmptyComponent = () => {
@@ -64,24 +70,29 @@ const WeatherList = ({navigation}: Props) => {
         style={styles.searchBar}
       />
       <Text variant='headlineLarge'>Weather List</Text>
-      <FlatList
-        horizontal
-        data={filteredData}
-        renderItem={renderItem}
-        keyExtractor={item => item.city}
-        contentContainerStyle={styles.listContent}
-        ListEmptyComponent={renderEmptyComponent}
-      />
+      <TVFocusGuideView autoFocus>
+        <FlatList
+          horizontal
+          data={filteredData}
+          renderItem={renderItem}
+          keyExtractor={item => item.city}
+          contentContainerStyle={styles.listContent}
+          style={{marginBottom: 16}}
+          ListEmptyComponent={renderEmptyComponent}
+        />
+      </TVFocusGuideView>
       <Text variant='headlineLarge'>Weather Tiles</Text>
-      <View style={styles.tilesContainer}>
-        {filteredData.map(item => (
+      <TVFocusGuideView style={styles.tilesContainer}>
+        {filteredData.map((item, index) => (
           <WeatherTile
             key={item.city}
             item={item}
             navigation={navigation}
+            index={index}
           />
         ))}
-      </View>
+      </TVFocusGuideView>
+      
     </ScrollView>
   );
 };
