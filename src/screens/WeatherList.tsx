@@ -1,11 +1,13 @@
 import React, {useState, useMemo} from 'react';
-import {View, StyleSheet, FlatList, ActivityIndicator} from 'react-native';
+import {View, StyleSheet, FlatList, ActivityIndicator, Pressable, ScrollView} from 'react-native';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import WeatherListItem from '../components/WeatherListItem';
 import type {RootStackParamList} from '../types/navigation';
 import type {WeatherData} from '../types/weather';
 import {useWeatherData} from '../hooks/useWeatherData';
-import {Text, Searchbar} from 'react-native-paper';
+import {Text, Searchbar, Card} from 'react-native-paper';
+import WeatherIcon from '../components/WeatherIcon';
+import WeatherTile from '../components/WeatherTile';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Weather'>;
 
@@ -54,27 +56,40 @@ const WeatherList = ({navigation}: Props) => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Searchbar
         placeholder="Search cities..."
         onChangeText={setSearchQuery}
         value={searchQuery}
         style={styles.searchBar}
       />
+      <Text variant='headlineLarge'>Weather List</Text>
       <FlatList
+        horizontal
         data={filteredData}
         renderItem={renderItem}
         keyExtractor={item => item.city}
         contentContainerStyle={styles.listContent}
         ListEmptyComponent={renderEmptyComponent}
       />
-    </View>
+      <Text variant='headlineLarge'>Weather Tiles</Text>
+      <View style={styles.tilesContainer}>
+        {filteredData.map(item => (
+          <WeatherTile
+            key={item.city}
+            item={item}
+            navigation={navigation}
+          />
+        ))}
+      </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingHorizontal: 16,
   },
   listContent: {
     paddingVertical: 8,
@@ -86,7 +101,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   searchBar: {
-    margin: 16,
+    marginVertical: 16,
     elevation: 2,
     backgroundColor: 'white',
     borderRadius: 10,
@@ -103,6 +118,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     textAlign: 'center',
+  },
+  tilesContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingHorizontal: 8,
+    paddingVertical: 16,
   },
 });
 

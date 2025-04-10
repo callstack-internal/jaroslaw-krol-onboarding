@@ -12,6 +12,14 @@ const CITY_IDS = {
   SINGAPORE: '1880252',
   BEIJING: '1816670',
   SYDNEY: '2147714',
+  RADZYN: '760680',
+  WARSZAWA: '7531889',
+  ROME: '3169070',
+  MADRID: '3085265',
+  BARCELONA: '3067696',
+  BERLIN: '2950159',
+  MOSCOW: '524901',
+  TOKYO: '1850147',
 } as const;
 
 type WeatherDataResponse = {
