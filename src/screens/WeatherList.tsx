@@ -1,12 +1,11 @@
-import React, {useState, useMemo, useRef} from 'react';
+import React, {useState, useMemo} from 'react';
 import {View, StyleSheet, FlatList, ActivityIndicator, Pressable, ScrollView, TVFocusGuideView} from 'react-native';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import WeatherListItem from '../components/WeatherListItem';
 import type {RootStackParamList} from '../types/navigation';
 import type {WeatherData} from '../types/weather';
 import {useWeatherData} from '../hooks/useWeatherData';
-import {Text, Searchbar, Card, TextInput} from 'react-native-paper';
-import WeatherIcon from '../components/WeatherIcon';
+import {Text, Searchbar} from 'react-native-paper';
 import WeatherTile from '../components/WeatherTile';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Weather'>;
@@ -14,7 +13,6 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Weather'>;
 const WeatherList = ({navigation}: Props) => {
   const {data, isLoading, isError, error} = useWeatherData();
   const [searchQuery, setSearchQuery] = useState('');
-  const firstItemRef = useRef<View>(null);
 
   const filteredData = useMemo(() => {
     if (!data?.list) return [];
@@ -41,7 +39,6 @@ const WeatherList = ({navigation}: Props) => {
 
   const renderItem = ({item, index}: {item: WeatherData, index: number}) => (
     <WeatherListItem
-      ref={index === 0 ? firstItemRef : null}
       item={item}
       navigation={navigation}
       index={index}
@@ -69,8 +66,10 @@ const WeatherList = ({navigation}: Props) => {
         value={searchQuery}
         style={styles.searchBar}
       />
+      {/* focus recovery test */}
+      {/* <Button mode="contained" onPress={() => setTimeout(() => setSearchQuery('b'), 5000)} style={{marginBottom: 16}}>Get B in 5 seconds</Button> */}
       <Text variant='headlineLarge'>Weather List</Text>
-      <TVFocusGuideView autoFocus>
+      <TVFocusGuideView autoFocus trapFocusLeft trapFocusRight>
         <FlatList
           horizontal
           data={filteredData}
@@ -82,7 +81,7 @@ const WeatherList = ({navigation}: Props) => {
         />
       </TVFocusGuideView>
       <Text variant='headlineLarge'>Weather Tiles</Text>
-      <TVFocusGuideView style={styles.tilesContainer}>
+      <TVFocusGuideView style={styles.tilesContainer} trapFocusLeft trapFocusRight>
         {filteredData.map((item, index) => (
           <WeatherTile
             key={item.city}
