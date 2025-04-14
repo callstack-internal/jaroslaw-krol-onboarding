@@ -10,13 +10,12 @@ type Props = {
   item: WeatherData;
   navigation: NativeStackNavigationProp<RootStackParamList, 'Weather'>;
   isFocused?: boolean;
-  index: number;
 };
 
-const WeatherListItem = ({item, navigation, isFocused = false, index}: Props) => {
+const WeatherListItem = ({item, navigation, isFocused = false}: Props) => {
   return (
     <Pressable
-      hasTVPreferredFocus={index === 0}
+      testID='weather-item'
       onPress={() => navigation.navigate('Details', {weatherData: item})}
       style={({focused}) => [
         styles.container,

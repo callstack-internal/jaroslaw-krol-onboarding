@@ -63,4 +63,20 @@ describe('WeatherListItem', () => {
       expect(getByText(condition)).toBeTruthy();
     });
   });
+
+  it('applies focus styling when focused', () => {
+    const {getByTestId} = render(
+      <WeatherListItem 
+        item={mockWeatherData}
+        navigation={mockNavigation}
+      />,
+    );
+
+    const pressable = getByTestId('weather-item');
+    fireEvent(pressable, 'focus');
+    
+    expect(pressable).toHaveStyle({
+      transform: [{scale: 1.05}]
+    });
+  });
 }); 

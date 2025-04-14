@@ -41,7 +41,6 @@ const WeatherList = ({navigation}: Props) => {
     <WeatherListItem
       item={item}
       navigation={navigation}
-      index={index}
     />
   );
 
@@ -82,12 +81,11 @@ const WeatherList = ({navigation}: Props) => {
       </TVFocusGuideView>
       <Text variant='headlineLarge'>Weather Tiles</Text>
       <TVFocusGuideView style={styles.tilesContainer} trapFocusLeft trapFocusRight>
-        {filteredData.map((item, index) => (
+        {filteredData.map((item) => (
           <WeatherTile
             key={item.city}
             item={item}
             navigation={navigation}
-            index={index}
           />
         ))}
       </TVFocusGuideView>

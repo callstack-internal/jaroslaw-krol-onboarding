@@ -9,17 +9,15 @@ import WeatherIcon from './WeatherIcon';
 type Props = {
   item: WeatherData;
   navigation: NativeStackNavigationProp<RootStackParamList, 'Weather'>;
-  index: number;
 };
 
-const WeatherTile = ({item, navigation, index}: Props) => {
+const WeatherTile = ({item, navigation}: Props) => {
   return (
     <Pressable
-      hasTVPreferredFocus={index === 0}
+      testID="weather-tile"
       onPress={() => navigation.navigate('Details', {weatherData: item})}
-      style={({pressed, focused}) => [
+      style={({focused}) => [
         styles.container,
-        pressed && styles.pressed,
         focused && styles.focused,
       ]}>
       <View style={styles.card}>
