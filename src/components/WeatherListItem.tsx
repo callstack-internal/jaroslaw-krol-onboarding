@@ -15,7 +15,7 @@ type Props = {
 const WeatherListItem = ({item, navigation, isFocused = false}: Props) => {
   return (
     <Pressable
-      testID='weather-item'
+      testID={`weather-item`}
       onPress={() => navigation.navigate('Details', {weatherData: item})}
       style={({focused}) => [
         styles.container,

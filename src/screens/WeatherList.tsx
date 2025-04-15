@@ -7,10 +7,11 @@ import type {WeatherData} from '../types/weather';
 import {useWeatherData} from '../hooks/useWeatherData';
 import {Text, Searchbar} from 'react-native-paper';
 import WeatherTile from '../components/WeatherTile';
-
+import { useNavigation } from '@react-navigation/native';
 type Props = NativeStackScreenProps<RootStackParamList, 'Weather'>;
 
-const WeatherList = ({navigation}: Props) => {
+const WeatherList = () => {
+  const navigation = useNavigation();
   const {data, isLoading, isError, error} = useWeatherData();
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -37,7 +38,7 @@ const WeatherList = ({navigation}: Props) => {
     );
   }
 
-  const renderItem = ({item, index}: {item: WeatherData, index: number}) => (
+  const renderItem = ({item}: {item: WeatherData}) => (
     <WeatherListItem
       item={item}
       navigation={navigation}
@@ -60,6 +61,7 @@ const WeatherList = ({navigation}: Props) => {
   return (
     <ScrollView style={styles.container}>
       <Searchbar
+        testID='search-bar'
         placeholder="Search cities..."
         onChangeText={setSearchQuery}
         value={searchQuery}

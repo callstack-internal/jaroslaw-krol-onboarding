@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
+import {createStaticNavigation, NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {Provider as PaperProvider, MD3LightTheme} from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -15,7 +15,24 @@ import WeatherList from './src/screens/WeatherList';
 import WeatherDetails from './src/screens/WeatherDetails';
 import type {RootStackParamList} from './src/types/navigation';
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
+export const RootStack = createNativeStackNavigator<RootStackParamList>({
+  initialRouteName: 'Weather',
+  screenOptions: {
+    headerStyle: {
+      backgroundColor: '#f8f9fa',
+    },
+    headerTitleStyle: {
+      fontWeight: 'bold',
+    },
+  },
+  screens: {
+    Weather: WeatherList,
+    Details: WeatherDetails,
+  }
+});
+
+export const Navigation = createStaticNavigation(RootStack);
+
 const queryClient = new QueryClient();
 
 const theme = {
@@ -34,25 +51,7 @@ const App = () => {
         settings={{
           icon: props => <MaterialCommunityIcons {...props} />,
         }}>
-        <NavigationContainer>
-          <Stack.Navigator screenOptions={{
-                headerStyle: {
-                  backgroundColor: '#f8f9fa',
-                },
-                headerTitleStyle: {
-                  fontWeight: 'bold',
-                },
-              }}>
-            <Stack.Screen
-              name="Weather"
-              component={WeatherList}
-            />
-            <Stack.Screen
-              name="Details"
-              component={WeatherDetails}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
+        <Navigation />
       </PaperProvider>
     </QueryClientProvider>
   );
