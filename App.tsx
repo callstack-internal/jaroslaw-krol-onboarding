@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import {createStaticNavigation, NavigationContainer} from '@react-navigation/native';
+import {createStaticNavigation} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {Provider as PaperProvider, MD3LightTheme} from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -28,7 +28,7 @@ export const RootStack = createNativeStackNavigator<RootStackParamList>({
   screens: {
     Weather: WeatherList,
     Details: WeatherDetails,
-  }
+  },
 });
 
 export const Navigation = createStaticNavigation(RootStack);
@@ -43,13 +43,15 @@ const theme = {
   },
 };
 
+const Icon = (props: any) => <MaterialCommunityIcons {...props} />;
+
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <PaperProvider
         theme={theme}
         settings={{
-          icon: props => <MaterialCommunityIcons {...props} />,
+          icon: Icon,
         }}>
         <Navigation />
       </PaperProvider>

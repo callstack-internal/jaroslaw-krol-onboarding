@@ -33,4 +33,4 @@ const WeatherIcon = ({condition, size = 24, color}: Props) => {
   );
 };
 
-export default WeatherIcon; 
+export default WeatherIcon;

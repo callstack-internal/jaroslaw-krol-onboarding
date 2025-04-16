@@ -2,21 +2,19 @@ import React from 'react';
 import {View, StyleSheet, Pressable} from 'react-native';
 import {Text} from 'react-native-paper';
 import type {WeatherData} from '../types/weather';
-import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import type {RootStackParamList} from '../types/navigation';
 import WeatherIcon from './WeatherIcon';
 
 type Props = {
   item: WeatherData;
-  navigation: NativeStackNavigationProp<RootStackParamList, 'Weather'>;
+  onPress: () => void;
   isFocused?: boolean;
 };
 
-const WeatherListItem = ({item, navigation, isFocused = false}: Props) => {
+const WeatherListItem = ({item, onPress, isFocused = false}: Props) => {
   return (
     <Pressable
-      testID={`weather-item`}
-      onPress={() => navigation.navigate('Details', {weatherData: item})}
+      testID={'weather-item'}
+      onPress={onPress}
       style={({focused}) => [
         styles.container,
         (focused || isFocused) && styles.focusedContainer,
@@ -29,9 +27,9 @@ const WeatherListItem = ({item, navigation, isFocused = false}: Props) => {
             color="#5c9cdb"
           />
         </View>
-        <Text variant='titleLarge' style={styles.cityText}>{item.city}</Text>
-        <Text variant='headlineLarge' style={styles.temperatureText}>{item.temperature}°F</Text>
-        <Text variant='bodyLarge' style={styles.conditionText}>{item.condition}</Text>
+        <Text variant="titleLarge" style={styles.cityText}>{item.city}</Text>
+        <Text variant="headlineLarge" style={styles.temperatureText}>{item.temperature}°F</Text>
+        <Text variant="bodyLarge" style={styles.conditionText}>{item.condition}</Text>
       </View>
     </Pressable>
   );
@@ -71,4 +69,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WeatherListItem; 
+export default WeatherListItem;

@@ -1,6 +1,6 @@
-import React, {useState, useMemo} from 'react';
-import {View, StyleSheet, FlatList, ActivityIndicator, Pressable, ScrollView, TVFocusGuideView} from 'react-native';
-import type {NativeStackScreenProps} from '@react-navigation/native-stack';
+import React, {useState, useMemo, useCallback} from 'react';
+import {View, StyleSheet, FlatList, ActivityIndicator, ScrollView, TVFocusGuideView} from 'react-native';
+import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import WeatherListItem from '../components/WeatherListItem';
 import type {RootStackParamList} from '../types/navigation';
 import type {WeatherData} from '../types/weather';
@@ -8,19 +8,42 @@ import {useWeatherData} from '../hooks/useWeatherData';
 import {Text, Searchbar} from 'react-native-paper';
 import WeatherTile from '../components/WeatherTile';
 import { useNavigation } from '@react-navigation/native';
-type Props = NativeStackScreenProps<RootStackParamList, 'Weather'>;
 
 const WeatherList = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const {data, isLoading, isError, error} = useWeatherData();
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredData = useMemo(() => {
-    if (!data?.list) return [];
+    if (!data?.list) {return [];}
     return data.list.filter(item =>
       item.city.toLowerCase().includes(searchQuery.toLowerCase()),
     );
   }, [data, searchQuery]);
+
+  const showDetails = useCallback((item: WeatherData) => {
+    navigation.navigate('Details', {weatherData: item});
+  }, [navigation]);
+
+  const renderItem = useCallback(({item}: {item: WeatherData}) => (
+    <WeatherListItem
+      item={item}
+      onPress={() => showDetails(item)}
+    />
+  ), [showDetails]);
+
+  const renderEmptyComponent = useCallback(() => {
+    if (searchQuery) {
+      return (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>
+            No cities found matching "{searchQuery}"
+          </Text>
+        </View>
+      );
+    }
+    return null;
+  }, [searchQuery]);
 
   if (isLoading) {
     return (
@@ -38,30 +61,10 @@ const WeatherList = () => {
     );
   }
 
-  const renderItem = ({item}: {item: WeatherData}) => (
-    <WeatherListItem
-      item={item}
-      navigation={navigation}
-    />
-  );
-
-  const renderEmptyComponent = () => {
-    if (searchQuery) {
-      return (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>
-            No cities found matching "{searchQuery}"
-          </Text>
-        </View>
-      );
-    }
-    return null;
-  };
-
   return (
     <ScrollView style={styles.container}>
       <Searchbar
-        testID='search-bar'
+        testID="search-bar"
         placeholder="Search cities..."
         onChangeText={setSearchQuery}
         value={searchQuery}
@@ -69,7 +72,7 @@ const WeatherList = () => {
       />
       {/* focus recovery test */}
       {/* <Button mode="contained" onPress={() => setTimeout(() => setSearchQuery('b'), 5000)} style={{marginBottom: 16}}>Get B in 5 seconds</Button> */}
-      <Text variant='headlineLarge'>Weather List</Text>
+      <Text variant="headlineLarge">Weather List</Text>
       <TVFocusGuideView autoFocus trapFocusLeft trapFocusRight>
         <FlatList
           horizontal
@@ -77,21 +80,21 @@ const WeatherList = () => {
           renderItem={renderItem}
           keyExtractor={item => item.city}
           contentContainerStyle={styles.listContent}
-          style={{marginBottom: 16}}
+          style={styles.list}
           ListEmptyComponent={renderEmptyComponent}
         />
       </TVFocusGuideView>
-      <Text variant='headlineLarge'>Weather Tiles</Text>
+      <Text variant="headlineLarge">Weather Tiles</Text>
       <TVFocusGuideView style={styles.tilesContainer} trapFocusLeft trapFocusRight>
         {filteredData.map((item) => (
           <WeatherTile
             key={item.city}
             item={item}
-            navigation={navigation}
+            onPress={() => showDetails(item)}
           />
         ))}
       </TVFocusGuideView>
-      
+
     </ScrollView>
   );
 };
@@ -135,6 +138,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 16,
   },
+  list: {
+    marginBottom: 16,
+  },
 });
 
-export default WeatherList; 
+export default WeatherList;

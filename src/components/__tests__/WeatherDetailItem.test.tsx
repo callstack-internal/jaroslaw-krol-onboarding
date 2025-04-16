@@ -1,46 +1,26 @@
 import React from 'react';
-import {render} from '@testing-library/react-native';
+import { render, screen } from '@testing-library/react-native';
 import WeatherDetailItem from '../WeatherDetailItem';
 
 describe('WeatherDetailItem', () => {
-  it('renders correctly with all props', () => {
-    const {getByText} = render(
-      <WeatherDetailItem
-        title="Humidity"
-        value={65}
-        unit="%"
-        icon="water-percent"
-      />,
-    );
+  it('renders title and value correctly', () => {
+    render(<WeatherDetailItem title="Temperature" value={25} unit="°C" icon="thermometer" />);
 
-    expect(getByText('Humidity')).toBeTruthy();
-    expect(getByText('65%')).toBeTruthy();
+    expect(screen.getByText('Temperature')).toBeTruthy();
+    expect(screen.getByText('25°C')).toBeTruthy();
   });
 
-  it('renders correctly with undefined value', () => {
-    const {getByText} = render(
-      <WeatherDetailItem
-        title="Pressure"
-        value={undefined}
-        unit="hPa"
-        icon="gauge"
-      />,
-    );
+  it('renders with undefined value', () => {
+    render(<WeatherDetailItem title="Humidity" value={undefined} unit="%" icon="water-percent" />);
 
-    expect(getByText('Pressure')).toBeTruthy();
-    expect(getByText('N/A')).toBeTruthy();
+    expect(screen.getByText('Humidity')).toBeTruthy();
+    expect(screen.getByText('N/A')).toBeTruthy();
   });
 
-  it('renders correctly without unit', () => {
-    const {getByText} = render(
-      <WeatherDetailItem
-        title="Wind Speed"
-        value={"10"}
-        icon="weather-windy"
-      />,
-    );
+  it('renders without unit', () => {
+    render(<WeatherDetailItem title="Wind" value="10" icon="weather-windy" />);
 
-    expect(getByText('Wind Speed')).toBeTruthy();
-    expect(getByText('10')).toBeTruthy();
+    expect(screen.getByText('Wind')).toBeTruthy();
+    expect(screen.getByText('10')).toBeTruthy();
   });
-}); 
+});

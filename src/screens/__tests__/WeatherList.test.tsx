@@ -1,16 +1,10 @@
 import React from 'react';
-import {render, screen, waitFor, cleanup, fireEvent, act} from '@testing-library/react-native';
+import {render, screen, waitFor, fireEvent} from '@testing-library/react-native';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import { server } from '../../mocks/setup';
 import { PaperProvider } from 'react-native-paper';
-import WeatherList from '../WeatherList';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import type { RootStackParamList } from '../../types/navigation';
 import { Navigation } from '../../../App';
 import { http, HttpResponse } from 'msw';
-
-const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -36,68 +30,100 @@ describe('WeatherList Integration Tests', () => {
   beforeAll(() => {
     server.listen();
   });
-   
+
   afterEach(() => {
-    cleanup();
     queryClient.clear();
     server.resetHandlers();
   });
-   
+
   afterAll(() => {
     server.close();
   });
 
   it('displays loading indicator while fetching data', () => {
-    const {getByTestId} = renderWithNavigation();
-    expect(getByTestId('loading-indicator')).toBeTruthy();
+    renderWithNavigation();
+    expect(screen.getByTestId('loading-indicator')).toBeTruthy();
   });
 
   it('displays weather data after successful fetch', async () => {
-    const {getAllByText, getAllByTestId} = renderWithNavigation();
-    
+    renderWithNavigation();
+
     await waitFor(() => {
-      expect(getAllByText('New York')).toHaveLength(2);
-      expect(getAllByTestId('weather-item')).toHaveLength(2);
-      expect(getAllByTestId('weather-tile')).toHaveLength(2);
+      expect(screen.getAllByText('New York')).toHaveLength(2);
     });
+      expect(screen.getAllByTestId('weather-item')).toHaveLength(2);
+      expect(screen.getAllByTestId('weather-tile')).toHaveLength(2);
+
   });
 
   it('filters cities based on search query', async () => {
-    const {getByTestId, queryByText, getAllByText} = renderWithNavigation();
+    renderWithNavigation();
 
     // Wait for initial data load
     await waitFor(() => {
-      expect(getAllByText('New York')).toHaveLength(2);
-      expect(getAllByText('London')).toHaveLength(2);
+      expect(screen.getAllByText('New York')).toHaveLength(2);
     });
+      expect(screen.getAllByText('London')).toHaveLength(2);
+
 
     // Perform search
-    const searchBar = getByTestId('search-bar');
-    await act(async () => {
-      fireEvent.changeText(searchBar, 'New');
-    });
+    const searchBar = screen.getByTestId('search-bar');
+    fireEvent.changeText(searchBar, 'New');
 
     // Verify filtered results
-    expect(getAllByText('New York')).toHaveLength(2);
-    expect(queryByText('London')).toBeFalsy();
+    expect(screen.getAllByText('New York')).toHaveLength(2);
+    expect(screen.queryByText('London')).toBeFalsy();
   });
 
   it('displays empty state when no cities match search', async () => {
-    const {getByTestId, getByText, getAllByText} = renderWithNavigation();
+    renderWithNavigation();
 
     // Wait for initial data load
     await waitFor(() => {
-      expect(getAllByText('New York')).toHaveLength(2);
+      expect(screen.getAllByText('New York')).toHaveLength(2);
     });
 
     // Perform search
-    const searchBar = getByTestId('search-bar');
-    await act(async () => {
-      fireEvent.changeText(searchBar, 'NonExistentCity');
-    });
+    const searchBar = screen.getByTestId('search-bar');
+    fireEvent.changeText(searchBar, 'NonExistentCity');
+
 
     // Verify empty state
-    expect(getByText('No cities found matching "NonExistentCity"')).toBeTruthy();
+    expect(screen.getByText('No cities found matching "NonExistentCity"')).toBeTruthy();
+  });
+
+  it('navigates to details screen when weather item is pressed', async () => {
+    renderWithNavigation();
+
+    // Wait for items to load
+    await waitFor(() => {
+      expect(screen.getAllByTestId('weather-item')).toHaveLength(2);
+    });
+
+    // Click weather tile
+    const firstWeatherItem = screen.getAllByTestId('weather-item')[1];
+    fireEvent.press(firstWeatherItem);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('weather-details')).toBeTruthy();
+    });
+  });
+
+  it('navigates to details screen when weather tile is pressed', async () => {
+    renderWithNavigation();
+
+    // Wait for items to load
+    await waitFor(() => {
+      expect(screen.getAllByTestId('weather-tile')).toHaveLength(2);
+    });
+
+    // Click weather tile
+    const firstWeatherTile = screen.getAllByTestId('weather-tile')[0];
+    fireEvent.press(firstWeatherTile);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('weather-details')).toBeTruthy();
+    });
   });
 
   it('displays error message when fetch fails', async () => {
@@ -113,4 +139,4 @@ describe('WeatherList Integration Tests', () => {
       expect(screen.getByText(/Error:/)).toBeTruthy();
     }, { timeout: 5000 });
   });
-}); 
+});

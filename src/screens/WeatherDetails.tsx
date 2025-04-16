@@ -1,16 +1,13 @@
 import React, {useMemo} from 'react';
 import {ScrollView, StyleSheet, View} from 'react-native';
 import {Surface, Text, useTheme} from 'react-native-paper';
-import {RouteProp} from '@react-navigation/native';
+import {RouteProp, useRoute} from '@react-navigation/native';
 import {RootStackParamList} from '../types/navigation';
 import WeatherDetailItem from '../components/WeatherDetailItem';
 import WeatherIcon from '../components/WeatherIcon';
 
-type Props = {
-  route: RouteProp<RootStackParamList, 'Details'>;
-};
-
-const WeatherDetails = ({route}: Props) => {
+const WeatherDetails = () => {
+  const route = useRoute<RouteProp<RootStackParamList, 'Details'>>();
   const {weatherData} = route.params;
   const theme = useTheme();
 
@@ -45,7 +42,7 @@ const WeatherDetails = ({route}: Props) => {
   );
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView testID="weather-details" style={styles.container}>
       <Surface style={styles.header} elevation={1}>
         <View style={styles.headerContent}>
           <WeatherIcon
@@ -117,4 +114,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WeatherDetails; 
+export default WeatherDetails;
