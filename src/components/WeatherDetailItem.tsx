@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {StyleSheet} from 'react-native';
 import {List} from 'react-native-paper';
 import { Style } from 'react-native-paper/lib/typescript/components/List/utils';
@@ -11,7 +11,10 @@ type Props = {
 };
 
 const WeatherDetailItem = ({title, value, unit = '', icon}: Props) => {
-  const displayValue = value === undefined ? 'N/A' : `${value}${unit}`;
+  const displayValue = useMemo(
+    () => (value === undefined ? 'N/A' : `${value}${unit}`),
+    [value, unit],
+  );
 
   const left = useCallback((props: {color: string, style: Style}) => <List.Icon {...props} icon={icon} />, [icon]);
 

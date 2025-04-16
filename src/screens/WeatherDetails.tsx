@@ -46,6 +46,7 @@ const WeatherDetails = () => {
       <Surface style={styles.header} elevation={1}>
         <View style={styles.headerContent}>
           <WeatherIcon
+            testID="weather-icon"
             condition={weatherData.condition}
             size={64}
             color={theme.colors.primary}

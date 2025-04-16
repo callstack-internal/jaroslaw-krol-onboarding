@@ -9,6 +9,7 @@ describe('WeatherIcon', () => {
           condition="clear"
           size={32}
           color="red"
+          testID="weather-icon"
         />,
       );
 
@@ -21,6 +22,7 @@ describe('WeatherIcon', () => {
         render(
           <WeatherIcon
             condition="clear"
+            testID="weather-icon"
           />,
         );
 

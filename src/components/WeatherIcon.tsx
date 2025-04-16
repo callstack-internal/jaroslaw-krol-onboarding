@@ -5,9 +5,10 @@ type Props = {
   condition: string;
   size?: number;
   color?: string;
+  testID?: string;
 };
 
-const WeatherIcon = ({condition, size = 24, color}: Props) => {
+const WeatherIcon = ({condition, size = 24, color, testID}: Props) => {
   const getWeatherIcon = (weatherCondition: string) => {
     switch (weatherCondition.toLowerCase()) {
       case 'clear':
@@ -25,7 +26,7 @@ const WeatherIcon = ({condition, size = 24, color}: Props) => {
 
   return (
     <MaterialCommunityIcons
-      testID="weather-icon"
+      testID={testID}
       name={getWeatherIcon(condition)}
       size={size}
       color={color}
