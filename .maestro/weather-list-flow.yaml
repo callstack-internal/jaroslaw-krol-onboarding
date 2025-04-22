@@ -1,0 +1,16 @@
+appId: com.weatherapp
+---
+- launchApp
+- assertVisible: "Weather"
+- tapOn: "Search cities..."
+- inputText: "Wroclaw"
+- assertVisible: "No cities found matching \"Wroclaw\""
+- eraseText
+- inputText: "New Y"
+- assertVisible: "New York"
+- tapOn:
+    text: "New York"
+    repeat: 2
+- assertVisible: "Details"
+- back
+- assertVisible: "Weather"
