@@ -1,24 +1,57 @@
-import React, {useState, useMemo} from 'react';
+import React, {useState, useMemo, useCallback} from 'react';
 import {View, StyleSheet, FlatList, ActivityIndicator} from 'react-native';
-import type {NativeStackScreenProps} from '@react-navigation/native-stack';
+import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import WeatherListItem from '../components/WeatherListItem';
 import type {RootStackParamList} from '../types/navigation';
 import type {WeatherData} from '../types/weather';
 import {useWeatherData} from '../hooks/useWeatherData';
 import {Text, Searchbar} from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'Weather'>;
+const WeatherList = () => {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-const WeatherList = ({navigation}: Props) => {
   const {data, isLoading, isError, error} = useWeatherData();
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredData = useMemo(() => {
-    if (!data?.list) return [];
+    if (!data?.list) {return [];}
     return data.list.filter(item =>
       item.city.toLowerCase().includes(searchQuery.toLowerCase()),
     );
   }, [data, searchQuery]);
+
+  const navigateToDetails = useCallback((item: WeatherData) => {
+    navigation.navigate('Details', {weatherData: item});
+  }, [navigation]);
+
+  const renderItem = useCallback(({item}: {item: WeatherData}) => (
+    <WeatherListItem item={item} onPress={navigateToDetails} />
+  ), [navigateToDetails]);
+
+  const renderEmptyComponent = useCallback(() => {
+    if (searchQuery) {
+      return (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>
+            No cities found matching "{searchQuery}"
+          </Text>
+        </View>
+      );
+    }
+    return null;
+  }, [searchQuery]);
+
+  const keyExtractor = useCallback((item: WeatherData) => item.city, []);
+
+  const searchBarMemo = useMemo(() => (
+    <Searchbar
+      placeholder="Search cities..."
+      onChangeText={setSearchQuery}
+      value={searchQuery}
+      style={styles.searchBar}
+    />
+  ), [searchQuery]);
 
   if (isLoading) {
     return (
@@ -36,35 +69,13 @@ const WeatherList = ({navigation}: Props) => {
     );
   }
 
-  const renderItem = ({item}: {item: WeatherData}) => (
-    <WeatherListItem item={item} navigation={navigation} />
-  );
-
-  const renderEmptyComponent = () => {
-    if (searchQuery) {
-      return (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>
-            No cities found matching "{searchQuery}"
-          </Text>
-        </View>
-      );
-    }
-    return null;
-  };
-
   return (
     <View style={styles.container}>
-      <Searchbar
-        placeholder="Search cities..."
-        onChangeText={setSearchQuery}
-        value={searchQuery}
-        style={styles.searchBar}
-      />
+      {searchBarMemo}
       <FlatList
         data={filteredData}
         renderItem={renderItem}
-        keyExtractor={item => item.city}
+        keyExtractor={keyExtractor}
         contentContainerStyle={styles.listContent}
         ListEmptyComponent={renderEmptyComponent}
       />
@@ -106,4 +117,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WeatherList; 
+export default WeatherList;

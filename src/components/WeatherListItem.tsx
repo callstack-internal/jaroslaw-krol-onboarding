@@ -1,18 +1,17 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import {List, Text, Surface} from 'react-native-paper';
 import type {WeatherData} from '../types/weather';
-import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import type {RootStackParamList} from '../types/navigation';
+import { Style } from 'react-native-paper/lib/typescript/components/List/utils';
 
 type Props = {
   item: WeatherData;
-  navigation: NativeStackNavigationProp<RootStackParamList, 'Weather'>;
+  onPress: (item: WeatherData) => void;
 };
 
-const WeatherListItem = ({item, navigation}: Props) => {
-  const renderWeatherIcon = (condition: string) => {
-    switch (condition.toLowerCase()) {
+const WeatherListItem = ({item, onPress}: Props) => {
+  const renderWeatherIcon = useMemo(() => {
+    switch (item.condition.toLowerCase()) {
       case 'clear':
         return 'weather-sunny';
       case 'clouds':
@@ -21,26 +20,27 @@ const WeatherListItem = ({item, navigation}: Props) => {
         return 'weather-pouring';
       case 'mist':
         return 'weather-fog';
-      default: 
+      default:
         return 'weather-sunny';
     }
-  };
+  }, [item.condition]);
+
+  const left = useCallback((props: {color: string, style?: Style}) => <List.Icon {...props} icon={renderWeatherIcon} />, [renderWeatherIcon]);
+  const right = useCallback((props: {color: string, style?: Style}) => (
+    <View {...props} style={styles.temperature}>
+      <Text style={styles.temperatureText}>{item.temperature}°F</Text>
+    </View>
+  ), [item]);
 
   return (
     <TouchableOpacity
-      onPress={() => navigation.navigate('Details', {weatherData: item})}>
+      onPress={() => onPress(item)}>
       <Surface style={styles.surface}>
         <List.Item
           title={item.city}
           description={item.condition}
-          left={props => (
-            <List.Icon {...props} icon={renderWeatherIcon(item.condition)} />
-          )}
-          right={props => (
-            <View {...props} style={styles.temperature}>
-              <Text style={styles.temperatureText}>{item.temperature}°F</Text>
-            </View>
-          )}
+          left={left}
+          right={right}
         />
       </Surface>
     </TouchableOpacity>
@@ -65,4 +65,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WeatherListItem; 
+export default WeatherListItem;

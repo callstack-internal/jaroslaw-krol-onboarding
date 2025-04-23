@@ -29,4 +29,4 @@ export type WeatherResponse = {
     };
   }>;
   cnt: number;
-}; 
+};

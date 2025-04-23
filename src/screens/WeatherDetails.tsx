@@ -45,7 +45,7 @@ const WeatherDetails = ({route}: Props) => {
   );
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView testID="weather-details" style={styles.container}>
       <Surface style={styles.header} elevation={1}>
         <View style={styles.headerContent}>
           <WeatherIcon
@@ -117,4 +117,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WeatherDetails; 
+export default WeatherDetails;

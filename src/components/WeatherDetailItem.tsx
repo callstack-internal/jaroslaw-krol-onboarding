@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {StyleSheet} from 'react-native';
 import {List} from 'react-native-paper';
 
@@ -12,11 +12,13 @@ type Props = {
 const WeatherDetailItem = ({title, value, unit = '', icon}: Props) => {
   const displayValue = value === undefined ? 'N/A' : `${value}${unit}`;
 
+  const left = useCallback((props: any) => <List.Icon {...props} icon={icon} />, [icon]);
+
   return (
     <List.Item
       title={title}
       description={displayValue}
-      left={props => <List.Icon {...props} icon={icon} />}
+      left={left}
       titleStyle={styles.title}
       descriptionStyle={styles.description}
     />
@@ -35,4 +37,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WeatherDetailItem; 
+export default WeatherDetailItem;

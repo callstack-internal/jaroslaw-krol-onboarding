@@ -13,4 +13,4 @@ export const fetchWeatherData = async (cityIds: string): Promise<WeatherResponse
   }
 
   return response.json();
-}; 
+};
