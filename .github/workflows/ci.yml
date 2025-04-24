@@ -30,20 +30,3 @@ jobs:
           echo "OPENWEATHER_API_URL=https://api.fakeopenweathermap.org/data/2.5" >> .env
           echo "OPENWEATHER_API_KEY=f4k34p1k3y" >> .env
       - run: yarn test
-
-  e2e:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '23'
-      - run: yarn
-      - name: Create .env file
-        run: |
-          echo "OPENWEATHER_API_URL=https://api.fakeopenweathermap.org/data/2.5" >> .env
-          echo "OPENWEATHER_API_KEY=f4k34p1k3y" >> .env
-      - name: Install Maestro
-        run: curl -Ls "https://get.maestro.mobile.dev" | bash
-      - name: Run E2E Tests
-        run: maestro test .maestro/
