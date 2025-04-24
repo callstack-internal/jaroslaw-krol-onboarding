@@ -46,4 +46,4 @@ jobs:
       - name: Install Maestro
         run: curl -Ls "https://get.maestro.mobile.dev" | bash
       - name: Run E2E Tests
-        run: ./maestro test maestro
+        run: maestro test .maestro/
